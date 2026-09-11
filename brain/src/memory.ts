@@ -1,7 +1,7 @@
 import { appendFile, mkdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-export type EpisodicFact = { at: string; epoch: number; kind: "OBSERVATION" | "ACTION" | "OUTCOME" | "DEATH" | "SPEECH"; text: string };
+export type EpisodicFact = { at: string; epoch: number; kind: "ACTION" | "OUTCOME" | "DEATH" | "SPEECH" | "DAMAGE" | "ACQUISITION"; text: string };
 export type SubjectiveState = { goals: string[]; intent: string; selfDescription?: string; updatedAt: string };
 export type Reflection = { at: string; text: string };
 export class MemoryStore {

@@ -10,7 +10,7 @@ import type { CognitionContext, CognitionProvider } from "../src/provider.js";
 import type { Decision, Perception } from "../src/contracts.js";
 
 const agentId = "4bde43d4-cbe1-49d0-8a33-9b2e8004881d";
-const perception = { agentId, name: "Memory", epoch: 2, self: { position: { x: 0, y: 64, z: 0 }, health: 20, hunger: 20, heldItem: "minecraft:air" }, environment: { dimension: "minecraft:overworld", timeOfDay: 0, weather: "clear", light: 10, biome: "minecraft:plains" }, entities: [], events: [], candidates: [{ id: "wait:2", kind: "WAIT", description: "Wait." }] } as const;
+const perception = { schemaVersion:1, agentId, name: "Memory", epoch: 2, capabilities:{playerHunger:false,inventory:true,nativeNavigation:true,blockBreaking:true,itemPickup:true}, self: { position: { x: 0, y: 64, z: 0 }, health: 20,maxHealth:20,alive:true,onGround:true,inWater:false,onFire:false,airSupply:300,fallDistance:0,effects:[],inventory:[] }, environment: { dimension: "minecraft:overworld", timeOfDay: 0, weather: "clear", light: 10, biome: "minecraft:plains",daytime:true,temperature:0.8,downfall:0 }, entities: [], blocks:[],items:[],events: [], candidates: [{ id: "wait:2", kind: "WAIT", description: "Wait." }] } as const;
 
 class CapturingProvider implements CognitionProvider {
   context?: CognitionContext;

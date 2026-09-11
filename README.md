@@ -32,6 +32,8 @@ In the server console or as an operator in game:
 /ec spawn Rowan
 /ec list
 /ec inspect Rowan
+/ec perceive Rowan
+/ec actions Rowan
 /ec pause Rowan
 /ec resume Rowan
 /ec movetest Rowan
@@ -42,6 +44,10 @@ In the server console or as an operator in game:
 ```
 
 Use `/ec movetest Rowan` to prove native body movement before involving Ollama. It preempts any pending cognition or active EmergentCraft path, chooses a nearby reachable target, and reports path start/completion or failure. To confirm there is no hidden Villager wandering, use `/ec pause Rowan` and observe the idle body.
+
+`/ec perceive Rowan` prints real local health, biome, visible entity/block/item counts, and legal action count; `/ec perceive Rowan full` writes the bounded structured view to the server log. `/ec actions Rowan` logs the offered candidates without asking Ollama. The body observes nearby line-of-sight entities/items (14 blocks) and exposed blocks (7 blocks), then may choose legal WAIT, movement/approach, block-break, item-pickup, or local speech actions. These are affordances, never priorities.
+
+The current body has no player hunger bar, so cognition receives `playerHunger=false` rather than an invented hunger number. Its carried inventory is an explicit bounded 36-slot agent inventory, persisted by stable identity through body rewrapping. `OLLAMA_MAX_CONCURRENT=1` limits global local-model concurrency by default; requests queue asynchronously while Minecraft keeps ticking.
 
 If an old world reports a loaded vanilla body after a chunk reload, `/ec repairbody Rowan` safely rebinds it. `/ec inspect Rowan` reports whether a body is controlled, awaiting restoration, unloaded, or missing.
 

@@ -14,7 +14,11 @@ Server-start repair alone is insufficient: an entity can deserialize as vanilla 
 
 ## Limitations
 
-This body does not yet provide player inventory, hunger, true player block breaking, crafting, or client player-list semantics. Perception is still minimal. The current local candidate is a short navigation attempt and may fail naturally because of terrain. `/ec movetest <name>` searches several nearby 3–5 block destinations, accepts only a reachable native path, and reports start/reached/failure without involving Ollama.
+This body does not provide player hunger, true player block-breaking/tool semantics, crafting, or client player-list semantics. `/ec movetest <name>` searches several nearby 3–5 block destinations, accepts only a reachable native path, and reports start/reached/failure without involving Ollama.
+
+Eyes and Hands adds a bounded `AgentInventoryStore` rather than relying on Villager's non-public trading inventory: it is authoritative for agent pickup, has 36 item kinds at up to 64 each, starts empty, and persists against the stable agent UUID so body rewrapping preserves it. The mod has not introduced FakePlayer. Fabric 26.2 player-interaction APIs would add a second player-like lifecycle without being necessary for native navigation, local pickup, or `Level.destroyBlock`; a future player-only interaction must be isolated behind an interaction proxy and separately live-tested.
+
+BREAK_BLOCK approaches using the visible Villager's native navigation, requires the originally offered block type to remain nearby and breakable, waits a hardness-derived bounded number of ticks, then invokes Minecraft's normal `Level.destroyBlock(..., drops=true, body, ...)`. It does not mine remotely or bypass bedrock. PICK_UP_ITEM similarly requires the exact offered `ItemEntity`, range, and inventory capacity before moving its real stack into the agent inventory and discarding the world entity.
 
 An idle, paused inhabitant has no EmergentCraft navigation path and no Villager Brain/goal behaviour, so it should not wander. Verify this in each live test with `/ec pause <name>` before trusting a movement result.
 
