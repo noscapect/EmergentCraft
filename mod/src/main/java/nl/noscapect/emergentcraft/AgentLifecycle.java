@@ -17,9 +17,10 @@ public final class AgentLifecycle {
         if (!acceptsDecision(epoch)) return false;
         state = State.EXECUTING_ACTION; return true;
     }
-    public boolean beginAdminAction() {
-        if (!canRequestCognition()) return false;
-        state = State.EXECUTING_ACTION; return true;
+    /** Admin diagnostics preempt cognition or a running executor action. */
+    public void beginAdminActionForcefully() {
+        cancel();
+        state = State.EXECUTING_ACTION;
     }
     public void finishCognition(long epoch) { if (acceptsDecision(epoch)) { state = State.IDLE; waitingEpoch = -1; } }
     public void finishAction() { if (state == State.EXECUTING_ACTION) { state = State.IDLE; waitingEpoch = -1; } }

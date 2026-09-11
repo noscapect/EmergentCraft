@@ -40,7 +40,7 @@ In the server console or as an operator in game:
 /ec brainstatus
 ```
 
-Use `/ec movetest Rowan` to prove native body movement before involving Ollama. It chooses a nearby reachable target and reports path start/completion or failure. To confirm there is no hidden Villager wandering, use `/ec pause Rowan` and observe the idle body.
+Use `/ec movetest Rowan` to prove native body movement before involving Ollama. It preempts any pending cognition or active EmergentCraft path, chooses a nearby reachable target, and reports path start/completion or failure. To confirm there is no hidden Villager wandering, use `/ec pause Rowan` and observe the idle body.
 
 `runServer` will create a development server. If you instead use a separately downloaded dedicated server, you must personally accept Mojang's EULA before running it; this repository never accepts it on your behalf.
 

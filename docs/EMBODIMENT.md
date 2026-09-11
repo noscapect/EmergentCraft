@@ -16,6 +16,8 @@ This body does not yet provide player inventory, hunger, true player block break
 
 An idle, paused inhabitant has no EmergentCraft navigation path and no Villager Brain/goal behaviour, so it should not wander. Verify this in each live test with `/ec pause <name>` before trusting a movement result.
 
+`/ec movetest <name>` intentionally preempts an in-flight cognition request or ordinary movement action. `/ec inspect <name>` exposes this as `runtime=EXECUTING_ACTION (movetest)`. Once the diagnostic path succeeds or fails, runtime returns to `IDLE` and normal cognition becomes eligible again.
+
 ## Next embodiment work
 
 Run 26.2 integration tests for `FakePlayer` after JDK 25 installation. If it provides reliable visible state and player interactions, introduce it only as a constrained interaction proxy behind an `Embodiment` interface; retain a custom navigable body if FakePlayer navigation remains unsuitable. This hybrid avoids Microsoft-account bots and scales to arbitrary simulated inhabitants without credentials.

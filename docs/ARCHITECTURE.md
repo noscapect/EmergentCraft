@@ -6,6 +6,8 @@ The server tick builds an immutable compact snapshot, starts one `HttpClient.sen
 
 Each inhabitant has runtime state: `IDLE`, `WAITING_FOR_COGNITION`, or `EXECUTING_ACTION`. New cognition is only requested from `IDLE`. A `MOVE_TO` keeps its action ID, start/target positions, tick timestamps, and last movement progress until native navigation reaches the arrival radius or fails by no path, path ending, stuck detection, timeout, or missing body.
 
+`/ec movetest` is an operator diagnostic, not an agent action. It forcefully cancels the current lifecycle state, stops a currently owned navigation path, clears runtime movement data, and enters a diagnostic execution state before creating its own native path. That invalidates the old pending decision epoch; a late LLM response can therefore never replace the diagnostic action. Diagnostic outcomes are logged but are not added to the agent's episodic memory.
+
 The milestone offers `WAIT` and a short `MOVE_TO` candidate. `MOVE_TO` invokes the body's Minecraft navigation; it is never implemented by long-distance teleportation. Candidate generation is intentionally an affordance layer, not a motivational policy.
 
 The brain uses Ollama `/api/generate` structured JSON by default, or `EC_PROVIDER=mock` for deterministic testing. It binds its own HTTP server to `127.0.0.1`. No model output is evaluated as code, command, filesystem instruction, or direct world operation.
