@@ -13,7 +13,9 @@ Each stable agent UUID owns an independent mind directory under `brain/data/<age
 
 ## Recall and budget
 
-Working events are recent and high fidelity. Older episodes are scored deterministically by current people/type/biome/location overlap, active-project terms, factual salience, and recency. Relevant social and recalled facts are fitted before raw recent trivia. The default compact context budget is 6,000 serialized characters; if it fills, relevance wins over history length.
+Working events are recent and high fidelity. Older episodes are scored deterministically by current people/type/biome/location overlap, bounded active-project/self/belief retrieval cues, factual salience, and forward recency (newer otherwise-equal facts rank higher). Subjective cues only select stored factual records; they never create facts or knowledge. Relevant social and recalled facts are fitted before raw recent trivia. Autobiographical chapters are ranked by cue overlap and recency rather than simply loaded in append order. The default compact context budget is 6,000 serialized characters and includes every section, including self/projects/chapters; oversized sections are clipped or omitted before the limit is exceeded.
+
+When factual events include authoritative Minecraft `worldTime`, recalled episode presentation uses simple Minecraft-relative labels such as `same Minecraft day` or `1 Minecraft day ago`. Legacy records retain wall-clock-relative labels.
 
 The local `AsyncQueue` serves foreground cognition before queued background chapter consolidation. Consolidation starts after 30 un-consolidated events, summarizes batches of 20 through the configured provider, validates its small public output, and never deletes episodes. Failed summaries leave memory unchanged.
 
