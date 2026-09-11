@@ -38,3 +38,4 @@ exit /b 0
 :javaMissing
 echo Java 25 was not found. Set JAVA_HOME to your JDK 25 folder and try again.
 exit /b 1
+ 
