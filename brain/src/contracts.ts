@@ -24,9 +24,16 @@ export const DecisionSchema = z.object({
 });
 export type Decision = z.infer<typeof DecisionSchema>;
 
+/** Factual events can only be appended by the Minecraft embodiment service. */
+export const EmbodimentEventSchema = z.object({
+  agentId: z.string().uuid(), epoch: z.number().int().nonnegative(),
+  kind: z.enum(["OBSERVATION", "ACTION", "OUTCOME", "DEATH", "SPEECH"]),
+  text: z.string().min(1).max(240)
+});
+export type EmbodimentEvent = z.infer<typeof EmbodimentEventSchema>;
+
 export function validateDecision(input: unknown, perception: Perception): Decision {
   const decision = DecisionSchema.parse(input);
   if (!perception.candidates.some(candidate => candidate.id === decision.actionId)) throw new Error("Decision selected an action outside the offered candidate set");
   return decision;
 }
-

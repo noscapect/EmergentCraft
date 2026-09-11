@@ -6,5 +6,5 @@ const perception = PerceptionSchema.parse({ agentId: "4bde43d4-cbe1-49d0-8a33-9b
 test("rejects action absent from candidates", () => assert.throws(() => validateDecision({ actionId: "break:secret", intent:"",goal:null,reflection:null,speech:null }, perception)));
 test("accepts offered action", () => assert.equal(validateDecision({ actionId:"wait:0",intent:"observe",goal:null,reflection:null,speech:null }, perception).actionId, "wait:0"));
 test("perception schema rejects an arbitrary action kind", () => assert.throws(() => PerceptionSchema.parse({ ...perception, candidates: [{ id:"x", kind:"COMMAND", description:"not legal" }] })));
-test("deterministic provider never requires inference", async () => assert.equal((await new DeterministicProvider().decide(perception, [])).actionId, "wait:0"));
+test("deterministic provider never requires inference", async () => assert.equal((await new DeterministicProvider().decide(perception, { episodicFacts: [], reflections: [], selfState: { goals: [], intent: "", updatedAt: "now" } })).actionId, "wait:0"));
 test("stale decision epochs are rejected", () => { assert.equal(isFreshDecision(8, 7), false); assert.equal(isFreshDecision(8, 8), true); });

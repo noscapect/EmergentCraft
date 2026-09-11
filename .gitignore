@@ -1,6 +1,7 @@
 .gradle/
 .tools/
 **/build/
+**/bin/
 **/run/
 **/logs/
 brain/node_modules/

@@ -4,7 +4,7 @@ An experimental Fabric mod and local cognition service for observing autonomous 
 
 ## Status
 
-The Brain vertical slice is complete and tested: it validates perception and action contracts, selects a candidate through Ollama or a deterministic provider, and persists separate episodic facts, subjective reflections, and self-authored state. The mod is a deliberately small 26.2 Fabric embodiment spike: it persists identities, creates visible disabled-AI villager bodies, asks the local brain asynchronously, and can visibly walk a body to a nearby candidate position. It does not use teleportation for movement.
+The Brain vertical slice is complete and tested: it validates perception and action contracts, selects a candidate through Ollama or a deterministic provider, and persists separate episodic facts, subjective reflections, and self-authored state. The mod persists identities, creates visible goal-less but navigable Villager bodies, asks the local brain asynchronously, and can visibly walk a body to a nearby candidate position. It does not use teleportation for movement.
 
 Java 25 is required for the mod. The included Windows launcher locates the registered JDK automatically, so it also works when an already-open terminal has not yet picked up the updated `PATH`.
 
@@ -34,10 +34,13 @@ In the server console or as an operator in game:
 /ec inspect Rowan
 /ec pause Rowan
 /ec resume Rowan
+/ec movetest Rowan
 /ec remove Rowan
 /ec revive Rowan
 /ec brainstatus
 ```
+
+Use `/ec movetest Rowan` to prove native body movement before involving Ollama. It chooses a nearby reachable target and reports path start/completion or failure. To confirm there is no hidden Villager wandering, use `/ec pause Rowan` and observe the idle body.
 
 `runServer` will create a development server. If you instead use a separately downloaded dedicated server, you must personally accept Mojang's EULA before running it; this repository never accepts it on your behalf.
 
