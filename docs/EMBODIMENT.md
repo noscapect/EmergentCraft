@@ -26,7 +26,7 @@ An idle, paused inhabitant has no EmergentCraft navigation path and no Villager 
 
 `/ec repairbody <name>` repairs a currently loaded vanilla registered body immediately. It reports an unloaded chunk instead of forcing it to load. If a body is genuinely missing or the registry lacks an embodiment ID, the explicit command recreates a controlled body near the invoking operator while retaining the agent's stable cognitive UUID/name/memory identity.
 
-`/ec remove <name>` never removes a registry record while its known body is unloaded: the operator must load the chunk first, so the entity and its identity are removed together. A historical registry loss can leave a vanilla Villager with no associated identity. In that exceptional case, `/ec inspect <name>` reports `ORPHANED_VANILLA`, and `/ec removeorphan <name>` removes exactly one loaded, unregistered vanilla Villager with that exact custom name. It refuses zero or multiple matches, and will not touch a registered or controlled body.
+`/ec remove <name>` never removes a registry record while its known body is unloaded: the operator must load the chunk first, so the entity and its identity are removed together. A historical registry loss can leave a vanilla Villager with no associated identity. In that exceptional case, `/ec inspect <name>` reports `ORPHANED_VANILLA`, and `/ec removeorphan <name>` removes exactly one loaded, unregistered vanilla Villager with that exact custom name. For multiple matches, it reports the UUIDs and requires `/ec removeorphan <name> <uuid>` to select a single body. It will not touch a registered or controlled body.
 
 ### Manual chunk-reload test
 
