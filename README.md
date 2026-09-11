@@ -36,6 +36,7 @@ In the server console or as an operator in game:
 /ec resume Rowan
 /ec movetest Rowan
 /ec remove Rowan
+/ec removeorphan Rowan
 /ec revive Rowan
 /ec brainstatus
 ```
@@ -43,6 +44,8 @@ In the server console or as an operator in game:
 Use `/ec movetest Rowan` to prove native body movement before involving Ollama. It preempts any pending cognition or active EmergentCraft path, chooses a nearby reachable target, and reports path start/completion or failure. To confirm there is no hidden Villager wandering, use `/ec pause Rowan` and observe the idle body.
 
 If an old world reports a loaded vanilla body after a chunk reload, `/ec repairbody Rowan` safely rebinds it. `/ec inspect Rowan` reports whether a body is controlled, awaiting restoration, unloaded, or missing.
+
+`/ec remove Rowan` refuses to delete an identity while its body chunk is unloaded, preventing a body from being left behind as an ordinary Villager. If a previous build already left an unregistered, loaded vanilla body behind, `/ec inspect Rowan` identifies it as `ORPHANED_VANILLA`; `/ec removeorphan Rowan` then removes only one exact custom-name match. It refuses ambiguous matches and never removes a registered EmergentCraft body.
 
 `runServer` will create a development server. If you instead use a separately downloaded dedicated server, you must personally accept Mojang's EULA before running it; this repository never accepts it on your behalf.
 
