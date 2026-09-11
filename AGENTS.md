@@ -1,6 +1,6 @@
 # EmergentCraft project memory
 
-- Milestone: **Eyes and Hands**.
+- Milestone: **Continuity of Mind**.
 - `mod/` is Fabric for Minecraft Java 26.2 using official Mojang mappings, Fabric Loader 0.19.5, Fabric API 0.160.0+26.2, Loom 1.14.10, and Java 25. `start-emergentcraft.cmd` discovers the registered JDK and starts both components.
 - `brain/` is Node/TypeScript. `npm run test`, `npm run build`, `npm run smoke:ollama` run from that folder.
 - The mod calls `POST http://127.0.0.1:3847/v1/decide` asynchronously. Never block a Minecraft server tick on HTTP.
@@ -14,5 +14,7 @@
 - Agent inventory is a bounded 36-slot, 64-per-stack `AgentInventoryStore`, persisted by stable agent UUID outside the world, so rewrapping a Villager body retains possessions. No starting items or unlimited inventory.
 - Physical actions currently include WAIT, native MOVE/APPROACH, timed range-checked BREAK_BLOCK, range/capacity-checked PICK_UP_ITEM, and local SPEAK. FakePlayer is not used: it has not been needed for this narrow executor and must not replace proven Villager navigation without separate verification.
 - The Brain has a FIFO global Ollama queue (`OLLAMA_MAX_CONCURRENT=1` default). It must never block Minecraft ticks.
+- Brain memory is per stable agent UUID: append-only factual episodes, evidence-derived knowledge, subjective reflections/beliefs/self-model, persistent projects, and derived autobiographical chapters. Never promote model text to world fact.
+- Deterministic recall ranks current-person/type/location/project overlap, factual salience and recency under a character budget. Background consolidation is queue-lower-priority than cognition.
 - Vanilla-type bodies rehydrate as ordinary Villagers after chunk load. `ServerEntityEvents.ENTITY_LOAD` rewraps only registry-matched embodiment UUIDs; use `/ec inspect` and `/ec repairbody` for diagnostics/recovery.
 - Runtime memory (`brain/data`, `mod/run`, worlds, logs) is ignored.

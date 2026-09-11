@@ -22,4 +22,8 @@ The brain uses Ollama `/api/generate` structured JSON by default, or `EC_PROVIDE
 
 The Brain owns a FIFO global `AsyncQueue`; `OLLAMA_MAX_CONCURRENT` defaults to one. Queue/start/completion timing and selected public action are logged, while HTTP requests wait asynchronously and never block a server tick.
 
+## Continuity of mind
+
+The Brain now retains per-agent working memory, immutable factual episodes, objective known-world records, subjective reflections/beliefs/self-model, active projects, social evidence, and model-authored autobiographical chapters. Retrieval is deterministic and bounded: currently perceived people/types/biome/location, project language, factual salience, and recency score candidate episodes. It is not a shared global memory, vector database, or model-weight training system. `/v1/recall`, `/v1/mind`, and `/v1/memories` are loopback observer endpoints used by operator diagnostics only.
+
 `config/emergentcraft/agents.tsv` is the mod-side registry, outside world-save internals. It holds stable UUID, name, creation time, life/pause state, body UUID, and decision epoch.

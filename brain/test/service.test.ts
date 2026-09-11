@@ -14,7 +14,12 @@ const perception = { schemaVersion:1, agentId, name: "Memory", epoch: 2, capabil
 
 class CapturingProvider implements CognitionProvider {
   context?: CognitionContext;
-  async decide(input: Perception, context: CognitionContext): Promise<Decision> { this.context = context; return { actionId: input.candidates[0].id, intent: "continue", goal: null, reflection: null, speech: null }; }
+  async decide(input: Perception, context: CognitionContext): Promise<Decision> { this.context = context; return { actionId: input.candidates[0].id, intent: "continue", reflection: null, speech: null }; }
+}
+
+class ProjectProvider implements CognitionProvider {
+  calls=0;
+  async decide(input:Perception,context:CognitionContext):Promise<Decision>{this.calls++;if(this.calls===1)return{actionId:input.candidates[0].id,intent:"begin",reflection:null,speech:null,projectUpdate:{operation:"CREATE",title:"Observe the hill",purpose:"I want to understand it.",progress:"I began thinking about it."}};if(this.calls===3)return{actionId:input.candidates[0].id,intent:"finish",reflection:null,speech:null,projectUpdate:{operation:"COMPLETE",projectId:context.projects[0]?.id,progress:"I am done with this for now."}};return{actionId:input.candidates[0].id,intent:"continue",reflection:null,speech:null};}
 }
 
 test("embodiment outcome is persisted as factual episodic memory", async () => {
@@ -28,7 +33,7 @@ test("embodiment outcome is persisted as factual episodic memory", async () => {
   } finally { server.close(); await once(server, "close"); }
 });
 
-test("self-authored goals and reflections enter later cognition context without becoming facts", async () => {
+test("self-authored state and reflections remain outside factual episodes", async () => {
   const store = new MemoryStore(await mkdtemp(join(tmpdir(), "ec-context-")));
   await store.writeState(agentId, { goals: ["Understand this place."], intent: "Look around.", updatedAt: "now" });
   await store.appendReflection(agentId, { at: "now", text: "The horizon seems open." });
@@ -38,9 +43,10 @@ test("self-authored goals and reflections enter later cognition context without 
     const port = (server.address() as { port: number }).port;
     const response = await fetch(`http://127.0.0.1:${port}/v1/decide`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(perception) });
     assert.equal(response.status, 200);
-    assert.deepEqual(provider.context?.selfState.goals, ["Understand this place."]);
-    assert.deepEqual(provider.context?.reflections, ["The horizon seems open."]);
-    assert.ok(provider.context?.episodicFacts.includes("Waited."));
-    assert.ok(!provider.context?.episodicFacts.includes("The horizon seems open."));
+    assert.deepEqual(provider.context?.self.goals, ["Understand this place."]);
+    assert.ok(provider.context?.working.some(event=>event.text==="Waited."));
+    assert.ok(!provider.context?.working.some(event=>event.text==="The horizon seems open."));
   } finally { server.close(); await once(server, "close"); }
 });
+
+test("self-authored projects persist across decisions and restart",async()=>{const root=await mkdtemp(join(tmpdir(),"ec-project-")),store=new MemoryStore(root),provider=new ProjectProvider(),server=createBrainServer(provider,store);server.listen(0,"127.0.0.1");await once(server,"listening");try{const url=`http://127.0.0.1:${(server.address() as {port:number}).port}/v1/decide`;for(let epoch=0;epoch<3;epoch++)assert.equal((await fetch(url,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({...perception,epoch})})).status,200);const projects=await new MemoryStore(root).projects(agentId);assert.equal(projects.length,1);assert.equal(projects[0].status,"COMPLETED");}finally{server.close();await once(server,"close");}});

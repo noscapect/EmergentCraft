@@ -11,3 +11,5 @@ test("global inference queue runs only its configured concurrency", async () => 
   assert.deepEqual(order, ["first-start"]); assert.equal(queue.queued, 1);
   release(); await Promise.all([first, second]); assert.deepEqual(order, ["first-start", "first-end", "second-start"]);
 });
+
+test("foreground cognition runs before queued background consolidation",async()=>{const queue=new AsyncQueue(1),order:string[]=[];let release!:()=>void;const gate=new Promise<void>(resolve=>{release=resolve;});const running=queue.run(async()=>{order.push("background-running");await gate;},"background");const laterBackground=queue.run(async()=>order.push("background-later"),"background");const cognition=queue.run(async()=>order.push("cognition"));await new Promise(resolve=>setImmediate(resolve));release();await Promise.all([running,laterBackground,cognition]);assert.deepEqual(order,["background-running","cognition","background-later"]);});
