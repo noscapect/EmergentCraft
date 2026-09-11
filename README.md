@@ -45,7 +45,7 @@ Use `/ec movetest Rowan` to prove native body movement before involving Ollama. 
 
 If an old world reports a loaded vanilla body after a chunk reload, `/ec repairbody Rowan` safely rebinds it. `/ec inspect Rowan` reports whether a body is controlled, awaiting restoration, unloaded, or missing.
 
-`/ec remove Rowan` refuses to delete an identity while its body chunk is unloaded, preventing a body from being left behind as an ordinary Villager. If a previous build already left unregistered, loaded vanilla bodies behind, `/ec inspect Rowan` identifies them as `ORPHANED_VANILLA`. `/ec removeorphan Rowan` removes one exact custom-name match; with duplicates, it prints their UUIDs and `/ec removeorphan Rowan <uuid>` removes exactly the chosen body. It never removes a registered EmergentCraft body.
+`/ec remove <name>` refuses to delete an identity while its registered body chunk is unloaded, preventing a body from being left behind as an ordinary Villager. For recovery from a previous registry loss, it also removes every loaded, unregistered vanilla Villager whose custom name exactly equals `<name>`; for example `/ec remove Rowan` or `/ec remove Alice`. `/ec inspect <name>` identifies these as `ORPHANED_VANILLA`. Use `/ec removeorphan <name> <uuid>` only when you deliberately want to select one duplicate instead. Registered bodies with a different name are never touched.
 
 `runServer` will create a development server. If you instead use a separately downloaded dedicated server, you must personally accept Mojang's EULA before running it; this repository never accepts it on your behalf.
 
