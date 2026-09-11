@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "emergentcraft",
+  "version": "${version}",
+  "name": "EmergentCraft",
+  "description": "Autonomous LLM inhabitants: First Contact.",
+  "authors": ["EmergentCraft"],
+  "environment": "server",
+  "entrypoints": { "main": ["nl.noscapect.emergentcraft.EmergentCraftMod"] },
+  "depends": { "fabricloader": ">=0.19.5", "minecraft": "26.2", "java": ">=25", "fabric-api": "*" }
+}
+

@@ -1,0 +1,10 @@
+import test from "node:test"; import assert from "node:assert/strict";
+import { PerceptionSchema, validateDecision } from "../src/contracts.js";
+import { DeterministicProvider } from "../src/provider.js";
+import { isFreshDecision } from "../src/freshness.js";
+const perception = PerceptionSchema.parse({ agentId: "4bde43d4-cbe1-49d0-8a33-9b2e8004881d", name: "A", epoch: 0, self: { position:{x:0,y:0,z:0},health:20,hunger:20,heldItem:"air" }, environment:{dimension:"overworld",timeOfDay:0,weather:"clear",light:10,biome:"plains"},entities:[],events:[],candidates:[{id:"wait:0",kind:"WAIT",description:"Wait."}] });
+test("rejects action absent from candidates", () => assert.throws(() => validateDecision({ actionId: "break:secret", intent:"",goal:null,reflection:null,speech:null }, perception)));
+test("accepts offered action", () => assert.equal(validateDecision({ actionId:"wait:0",intent:"observe",goal:null,reflection:null,speech:null }, perception).actionId, "wait:0"));
+test("perception schema rejects an arbitrary action kind", () => assert.throws(() => PerceptionSchema.parse({ ...perception, candidates: [{ id:"x", kind:"COMMAND", description:"not legal" }] })));
+test("deterministic provider never requires inference", async () => assert.equal((await new DeterministicProvider().decide(perception, [])).actionId, "wait:0"));
+test("stale decision epochs are rejected", () => { assert.equal(isFreshDecision(8, 7), false); assert.equal(isFreshDecision(8, 8), true); });

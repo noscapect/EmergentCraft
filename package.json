@@ -1,0 +1,11 @@
+{
+  "name": "emergentcraft",
+  "private": true,
+  "scripts": {
+    "brain:install": "npm --prefix brain install",
+    "brain:test": "npm --prefix brain test",
+    "brain:build": "npm --prefix brain run build",
+    "smoke:ollama": "npm --prefix brain run smoke:ollama"
+  }
+}
+

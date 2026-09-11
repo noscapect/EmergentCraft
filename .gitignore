@@ -1,0 +1,15 @@
+.gradle/
+.tools/
+**/build/
+**/run/
+**/logs/
+brain/node_modules/
+brain/dist/
+brain/.env
+brain/data/
+*.log
+.idea/
+.vscode/
+*.iml
+*.jar
+!mod/gradle/wrapper/gradle-wrapper.jar
