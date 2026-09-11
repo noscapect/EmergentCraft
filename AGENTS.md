@@ -9,4 +9,5 @@
 - Do not add survival, social, building, or progression scoring/rules. Affordances are not goals.
 - Current body is a `GoalLessVillager`: a vanilla-type Villager subclass with `NoAI=false`, cleared free will, and a suppressed Villager Brain tick. Minecraft's native navigation/control ticks remain active. No normal movement teleportation. See `docs/EMBODIMENT.md` before changing it.
 - Runtime action state is `IDLE`, `WAITING_FOR_COGNITION`, or `EXECUTING_ACTION`; never start cognition while an action executes. Minecraft reports factual action outcomes to `POST /v1/event`.
+- Vanilla-type bodies rehydrate as ordinary Villagers after chunk load. `ServerEntityEvents.ENTITY_LOAD` rewraps only registry-matched embodiment UUIDs; use `/ec inspect` and `/ec repairbody` for diagnostics/recovery.
 - Runtime memory (`brain/data`, `mod/run`, worlds, logs) is ignored.

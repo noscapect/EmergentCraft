@@ -42,6 +42,8 @@ In the server console or as an operator in game:
 
 Use `/ec movetest Rowan` to prove native body movement before involving Ollama. It preempts any pending cognition or active EmergentCraft path, chooses a nearby reachable target, and reports path start/completion or failure. To confirm there is no hidden Villager wandering, use `/ec pause Rowan` and observe the idle body.
 
+If an old world reports a loaded vanilla body after a chunk reload, `/ec repairbody Rowan` safely rebinds it. `/ec inspect Rowan` reports whether a body is controlled, awaiting restoration, unloaded, or missing.
+
 `runServer` will create a development server. If you instead use a separately downloaded dedicated server, you must personally accept Mojang's EULA before running it; this repository never accepts it on your behalf.
 
 Set `OLLAMA_MODEL` in `brain/.env`, or leave it blank to select the first installed model reported by Ollama. `npm run smoke:ollama` performs one schema-constrained request and prints no hidden reasoning.
