@@ -6,9 +6,13 @@ An experimental Fabric mod and local cognition service for observing autonomous 
 
 The Brain vertical slice is complete and tested: it validates perception and action contracts, selects a candidate through Ollama or a deterministic provider, and persists separate episodic facts, subjective reflections, and self-authored state. The mod is a deliberately small 26.2 Fabric embodiment spike: it persists identities, creates visible disabled-AI villager bodies, asks the local brain asynchronously, and can visibly walk a body to a nearby candidate position. It does not use teleportation for movement.
 
-Java 25 is required for the mod. This machine did not have `java` on PATH when this milestone was assembled, so mod compilation/runtime must be performed after installing a user-scoped JDK 25 (for example Temurin 25) and reopening the terminal.
+Java 25 is required for the mod. The included Windows launcher locates the registered JDK automatically, so it also works when an already-open terminal has not yet picked up the updated `PATH`.
 
 ## Run
+
+The simplest Windows startup is double-clicking `start-emergentcraft.cmd` in the repository root. It finds the installed Java 25 JDK, starts the Brain and Fabric development server in separate windows, and installs Brain dependencies on first use.
+
+To start components manually:
 
 ```powershell
 # terminal 1

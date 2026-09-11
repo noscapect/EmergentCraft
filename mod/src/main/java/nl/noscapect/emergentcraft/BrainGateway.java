@@ -17,7 +17,6 @@ public final class BrainGateway {
     private final URI endpoint = URI.create(System.getProperty("emergentcraft.brainUrl", "http://127.0.0.1:3847") + "/v1/decide");
     public CompletableFuture<Optional<String>> decide(String compactSnapshot) {
         HttpRequest request = HttpRequest.newBuilder(endpoint).timeout(Duration.ofSeconds(125)).header("content-type", "application/json").POST(HttpRequest.BodyPublishers.ofString(compactSnapshot)).build();
-        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> { if (response.statusCode()!=200) return Optional.empty(); Matcher matcher=ACTION.matcher(response.body()); return matcher.find()?Optional.of(matcher.group(1)):Optional.empty(); }).exceptionally(error -> { EmergentCraftMod.LOGGER.debug("Brain request unavailable: {}", error.toString()); return Optional.empty(); });
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> { if (response.statusCode()!=200) return Optional.<String>empty(); Matcher matcher=ACTION.matcher(response.body()); return matcher.find()?Optional.of(matcher.group(1)):Optional.<String>empty(); }).exceptionally(error -> { EmergentCraftMod.LOGGER.debug("Brain request unavailable: {}", error.toString()); return Optional.empty(); });
     }
 }
-
