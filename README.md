@@ -42,6 +42,7 @@ In the server console or as an operator in game:
 /ec resume Rowan
 /ec movetest Rowan
 /ec remove Rowan
+/ec removeall
 /ec removeorphan Rowan
 /ec revive Rowan
 /ec brainstatus
@@ -58,6 +59,8 @@ The current body has a persistent agent metabolism (hunger/saturation) visible t
 If an old world reports a loaded vanilla body after a chunk reload, `/ec repairbody Rowan` safely rebinds it. `/ec inspect Rowan` reports whether a body is controlled, awaiting restoration, unloaded, or missing.
 
 `/ec remove <name>` refuses to delete an identity while its registered body chunk is unloaded, preventing a body from being left behind as an ordinary Villager. For recovery from a previous registry loss, it also removes every loaded, unregistered vanilla Villager whose custom name exactly equals `<name>`; for example `/ec remove Rowan` or `/ec remove Alice`. `/ec inspect <name>` identifies these as `ORPHANED_VANILLA`. Use `/ec removeorphan <name> <uuid>` only when you deliberately want to select one duplicate instead. Registered bodies with a different name are never touched.
+
+`/ec removeall` is an explicit destructive operator purge for a broken test world. It removes every loaded EmergentCraft body (including duplicate Rowan bodies), clears all persisted EmergentCraft identities, and stops their runtimes. It does not delete the separate memory files; unloaded chunks cannot be scanned immediately, but those former bodies no longer have registry identities and will not be rewrapped.
 
 `runServer` will create a development server. If you instead use a separately downloaded dedicated server, you must personally accept Mojang's EULA before running it; this repository never accepts it on your behalf.
 

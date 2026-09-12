@@ -16,12 +16,12 @@ export const profileFor=(id:string|undefined):ModelProfile=>profiles[(id??"gener
 
 /** The sole model-facing adapter. Canonical authority stays in the mod/contracts. */
 export function profilePrompt(profile:ModelProfile, perception:Perception, context:CognitionContext) {
-  const candidates=perception.candidates.map(candidate=>profile.compactMinecraft
-    ? {id:candidate.id,activity:candidate.kind,targetId:candidate.targetId??candidate.target,description:candidate.description}
+  const candidates=perception.candidates.map((candidate,choice)=>profile.compactMinecraft
+    ? {choice,activity:candidate.kind,targetId:candidate.targetId??candidate.target,position:candidate.target,description:candidate.description}
     : candidate);
   return {system:profile.system,identity:context.self,projects:context.projects,beliefs:context.beliefs,
     perception:{self:perception.self,capabilities:perception.capabilities,environment:perception.environment,entities:perception.entities,blocks:perception.blocks,items:perception.items},
     memories:{working:context.working,recalled:context.recalled,social:context.social,knowledge:context.knowledge,reflections:context.reflections,chapters:context.chapters},
     availableActivities:candidates,
-    responseRule:"Select actionId only from availableActivities. BUILD_PLAN alone may include at most 24 local placements using carried item IDs."};
+    responseRule:profile.compactMinecraft?"Return JSON only: choice is the zero-based number of one available activity; intent is short; speech is null unless SPEAK. Never output actionId, commands, coordinates, or tools.":"Select actionId only from availableActivities. BUILD_PLAN alone may include at most 24 local placements using carried item IDs."};
 }
