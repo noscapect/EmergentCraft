@@ -22,7 +22,7 @@ Candidates are opaque server IDs and retain a server-side `OfferedAction` with e
 
 `AgentInventoryStore` is a 36-slot/64-per-stack authoritative carried inventory keyed by stable agent UUID, persisted outside the world. It is therefore preserved when a vanilla-saved body is rewrapped. There are no starting items. FakePlayer is isolated to a local placement proxy; it never replaces the visible body or native navigation.
 
-The brain uses Ollama `/api/generate` structured JSON by default, or `EC_PROVIDER=mock` for deterministic testing. It binds its own HTTP server to `127.0.0.1`. No model output is evaluated as code, command, filesystem instruction, or direct world operation.
+The brain uses one server-wide Ollama `/api/generate` structured-JSON configuration by default, or `EC_PROVIDER=mock` for deterministic testing. Provider/model/profile are selected in `brain/.env`; all residents share inference capacity while receiving only their own memory context. It binds its own HTTP server to `127.0.0.1`. No model output is evaluated as code, command, filesystem instruction, or direct world operation.
 
 ## Memory
 
