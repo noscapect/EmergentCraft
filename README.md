@@ -45,6 +45,10 @@ In the server console or as an operator in game:
 /ec removeorphan Rowan
 /ec revive Rowan
 /ec brainstatus
+/ec brainstatus Rowan
+/ec brainmodel Rowan qwen3.5-hauhaucs-uncensored:9b
+/ec brainprofile Rowan qwen
+/ec brainprovider Rowan ollama
 ```
 
 Use `/ec movetest Rowan` to prove native body movement before involving Ollama. It preempts any pending cognition or active EmergentCraft path, chooses a nearby reachable target, and reports path start/completion or failure. To confirm there is no hidden Villager wandering, use `/ec pause Rowan` and observe the idle body.
@@ -64,3 +68,15 @@ If an old world reports a loaded vanilla body after a chunk reload, `/ec repairb
 Set `OLLAMA_MODEL` in `brain/.env`, or leave it blank to select the first installed model reported by Ollama. `npm run smoke:ollama` performs one schema-constrained request and prints no hidden reasoning.
 
 See [architecture](docs/ARCHITECTURE.md), [experiment boundaries](docs/EXPERIMENT.md), and [embodiment decision](docs/EMBODIMENT.md).
+
+### Qwen via Ollama
+
+Set `EC_PROVIDER=ollama`, `EC_MODEL_PROFILE=qwen`, and `OLLAMA_MODEL=<installed Qwen tag>` in `brain/.env`. Then use `/ec brainmodel Rowan <tag>` and `/ec brainprofile Rowan qwen` without restarting the Minecraft server.
+
+### Andy-4 via Ollama
+
+After intentionally installing an Andy model yourself, set or select `sweaterdog/andy-4:micro-q8_0` and run `/ec brainprofile Rowan minecraft-andy4`. EmergentCraft never downloads model weights automatically.
+
+### Andy-4.1 via LM Studio / llama-server
+
+Start an OpenAI-compatible server only on `127.0.0.1:1234`, then set `EC_PROVIDER=openai-compatible`, `LOCAL_OPENAI_BASE_URL=http://127.0.0.1:1234/v1`, and `EC_MODEL_PROFILE=minecraft-andy41`. In game: `/ec brainprovider Rowan openai-compatible`, `/ec brainmodel Rowan <loaded-model-id>`, `/ec brainprofile Rowan minecraft-andy41`. See [model details](docs/MODELS.md).

@@ -1,6 +1,6 @@
 # EmergentCraft project memory
 
-- Milestone: **Agency**. Skills provide physical capability; the model alone supplies motivation. Never add hunger/survival/progression scripts.
+- Milestone: **Model Runtime Hardening**. Skills provide physical capability; the model alone supplies motivation. Never add hunger/survival/progression scripts.
 - `mod/` is Fabric for Minecraft Java 26.2 using official Mojang mappings, Fabric Loader 0.19.5, Fabric API 0.160.0+26.2, Loom 1.14.10, and Java 25. `start-emergentcraft.cmd` discovers the registered JDK and starts both components.
 - `brain/` is Node/TypeScript. `npm run test`, `npm run build`, `npm run smoke:ollama` run from that folder.
 - The mod calls `POST http://127.0.0.1:3847/v1/decide` asynchronously. Never block a Minecraft server tick on HTTP.
@@ -14,6 +14,8 @@
 - Agent inventory is a bounded 36-slot, 64-per-stack `AgentInventoryStore`, persisted by stable agent UUID outside the world, so rewrapping a Villager body retains possessions. No starting items or unlimited inventory.
 - Physical actions include native travel/approach, acquisition, pickup, food use, equipment, combat, recipe-aware crafting, bounded block placement/build plans, and local speech. FakePlayer is an invisible, local placement-only interaction proxy; never replace the visible Villager body/navigation with it.
 - The Brain has a FIFO global Ollama queue (`OLLAMA_MAX_CONCURRENT=1` default). It must never block Minecraft ticks.
+- Model provider and profile are separate: Ollama and loopback OpenAI-compatible endpoints support generic/Qwen/Andy profiles. Per-agent UUID-keyed operational config is outside autobiographical memory; a switch must invalidate the Minecraft epoch. Consolidation is per-agent, background, and lower priority than cognition.
+- AIBot MIT task lifecycle is adapted under `mod/.../task/`; retain headers and `THIRD_PARTY_NOTICES.md` when changing upstream-derived code.
 - Brain memory is per stable agent UUID: append-only factual episodes, evidence-derived knowledge, subjective reflections/beliefs/self-model, persistent projects, and derived autobiographical chapters. Never promote model text to world fact.
 - Deterministic recall ranks current-person/type/location/project overlap, factual salience and recency under a character budget. Background consolidation is queue-lower-priority than cognition.
 - Vanilla-type bodies rehydrate as ordinary Villagers after chunk load. `ServerEntityEvents.ENTITY_LOAD` rewraps only registry-matched embodiment UUIDs; use `/ec inspect` and `/ec repairbody` for diagnostics/recovery.

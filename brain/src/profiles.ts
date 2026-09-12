@@ -17,7 +17,7 @@ export const profileFor=(id:string|undefined):ModelProfile=>profiles[(id??"gener
 /** The sole model-facing adapter. Canonical authority stays in the mod/contracts. */
 export function profilePrompt(profile:ModelProfile, perception:Perception, context:CognitionContext) {
   const candidates=perception.candidates.map(candidate=>profile.compactMinecraft
-    ? {id:candidate.id,activity:candidate.kind,target:candidate.target,description:candidate.description}
+    ? {id:candidate.id,activity:candidate.kind,targetId:candidate.targetId??candidate.target,description:candidate.description}
     : candidate);
   return {system:profile.system,identity:context.self,projects:context.projects,beliefs:context.beliefs,
     perception:{self:perception.self,capabilities:perception.capabilities,environment:perception.environment,entities:perception.entities,blocks:perception.blocks,items:perception.items},
