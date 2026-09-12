@@ -14,3 +14,4 @@ brain/data/
 *.iml
 *.jar
 !mod/gradle/wrapper/gradle-wrapper.jar
+.upstream-research/
