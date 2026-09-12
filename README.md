@@ -32,6 +32,7 @@ In the server console or as an operator in game:
 /ec spawn Rowan
 /ec list
 /ec inspect Rowan
+/ec activity Rowan
 /ec perceive Rowan
 /ec actions Rowan
 /ec mind Rowan
@@ -50,9 +51,9 @@ Use `/ec movetest Rowan` to prove native body movement before involving Ollama. 
 
 `/ec perceive Rowan` prints real local health, biome, visible entity/block/item counts, and legal action count; `/ec perceive Rowan full` writes the bounded structured view to the server log. `/ec actions Rowan` logs the offered candidates without asking Ollama. The body observes nearby line-of-sight entities/items (14 blocks) and exposed blocks (7 blocks), then may choose legal WAIT, movement/approach, block-break, item-pickup, or local speech actions. These are affordances, never priorities.
 
-The current body has no player hunger bar, so cognition receives `playerHunger=false` rather than an invented hunger number. Its carried inventory is an explicit bounded 36-slot agent inventory, persisted by stable identity through body rewrapping. `OLLAMA_MAX_CONCURRENT=1` limits global local-model concurrency by default; requests queue asynchronously while Minecraft keeps ticking.
+The current body has a persistent agent metabolism (hunger/saturation) visible to cognition, while its carried inventory remains an explicit bounded 36-slot agent inventory persisted by stable identity through body rewrapping. `OLLAMA_MAX_CONCURRENT=1` limits global local-model concurrency by default; requests queue asynchronously while Minecraft keeps ticking.
 
-`/ec mind Rowan` shows stored self/project/belief and memory counts. `/ec memories Rowan` writes recent factual episodes and autobiographical chapters to the server log. `/ec recall Rowan` builds current perception and logs the exact bounded long-term context that would be supplied to Rowan, without asking for a decision. See [memory architecture](docs/MEMORY.md).
+`/ec mind Rowan` shows stored self/project/belief and memory counts. `/ec memories Rowan` writes recent factual episodes and autobiographical chapters to the server log. `/ec recall Rowan` builds current perception and logs the exact bounded long-term context that would be supplied to Rowan, without asking for a decision. `/ec activity Rowan` reports activity, persistent hunger/saturation, selected equipment and inventory. Skills are capabilities, never orders: the model can choose legal travel, acquire, eat, equip, engage, craft, placement, or a bounded self-authored build plan. See [memory architecture](docs/MEMORY.md) and [agency](docs/AGENCY.md).
 
 If an old world reports a loaded vanilla body after a chunk reload, `/ec repairbody Rowan` safely rebinds it. `/ec inspect Rowan` reports whether a body is controlled, awaiting restoration, unloaded, or missing.
 

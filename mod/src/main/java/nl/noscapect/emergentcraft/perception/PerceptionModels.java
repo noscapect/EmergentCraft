@@ -7,8 +7,10 @@ public final class PerceptionModels {
     private PerceptionModels() { }
     public record Position(double x,double y,double z) { }
     public record InventoryEntry(String item,int count) { }
-    public record Capabilities(boolean playerHunger,boolean inventory,boolean nativeNavigation,boolean blockBreaking,boolean itemPickup) { }
-    public record SelfPerception(Position position,float health,float maxHealth,boolean alive,boolean onGround,boolean inWater,boolean onFire,int airSupply,float fallDistance,List<String> effects,List<InventoryEntry> inventory) { }
+    public record Hunger(int current,int max,float saturation,boolean starving) { }
+    public record Equipment(String mainHand,String offHand,String head,String chest,String legs,String feet) { }
+    public record Capabilities(boolean playerHunger,boolean inventory,boolean nativeNavigation,boolean blockBreaking,boolean itemPickup,boolean eating,boolean equipment,boolean combat,boolean crafting,boolean placement) { }
+    public record SelfPerception(Position position,float health,float maxHealth,boolean alive,boolean onGround,boolean inWater,boolean onFire,int airSupply,float fallDistance,List<String> effects,List<InventoryEntry> inventory,Hunger hunger,Equipment equipment) { }
     public record EnvironmentPerception(String dimension,long timeOfDay,String weather,int light,String biome,boolean daytime,float temperature,float downfall) { }
     public record EmergentIdentity(String agentId,String name) { }
     public record ObservedEntity(String id,String type,Position relativePosition,double distance,String name,boolean alive,EmergentIdentity emergentCraft,Boolean burning,Boolean baby) { }

@@ -14,9 +14,11 @@ Server-start repair alone is insufficient: an entity can deserialize as vanilla 
 
 ## Limitations
 
-This body does not provide player hunger, true player block-breaking/tool semantics, crafting, or client player-list semantics. `/ec movetest <name>` searches several nearby 3–5 block destinations, accepts only a reachable native path, and reports start/reached/failure without involving Ollama.
+The body now has persistent agent hunger/saturation physics, selected equipment synchronized to body slots, and recipe/food skill support. It remains a Villager, not a player. Fabric's `FakePlayer` is used only as an invisible local placement proxy because vanilla block placement requires a player context. It never navigates, receives cognition, or replaces the visible body.
 
-Eyes and Hands adds a bounded `AgentInventoryStore` rather than relying on Villager's non-public trading inventory: it is authoritative for agent pickup, has 36 item kinds at up to 64 each, starts empty, and persists against the stable agent UUID so body rewrapping preserves it. The mod has not introduced FakePlayer. Fabric 26.2 player-interaction APIs would add a second player-like lifecycle without being necessary for native navigation, local pickup, or `Level.destroyBlock`; a future player-only interaction must be isolated behind an interaction proxy and separately live-tested.
+This body does not provide a vanilla player food bar or client player-list semantics, but does provide persistent agent hunger/saturation, equipment, food skills and recipe skills. `/ec movetest <name>` searches several nearby 3–5 block destinations, accepts only a reachable native path, and reports start/reached/failure without involving Ollama.
+
+Eyes and Hands adds a bounded `AgentInventoryStore` rather than relying on Villager's non-public trading inventory: it is authoritative for agent pickup, has 36 item kinds at up to 64 each, starts empty, and persists against the stable agent UUID so body rewrapping preserves it. Fabric 26.2 `FakePlayer` is now limited to invisible vanilla block-placement context; it is never an agent body or navigator.
 
 BREAK_BLOCK approaches using the visible Villager's native navigation, requires the originally offered block type to remain nearby and breakable, waits a hardness-derived bounded number of ticks, then invokes Minecraft's normal `Level.destroyBlock(..., drops=true, body, ...)`. It does not mine remotely or bypass bedrock. PICK_UP_ITEM similarly requires the exact offered `ItemEntity`, range, and inventory capacity before moving its real stack into the agent inventory and discarding the world entity.
 

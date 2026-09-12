@@ -10,6 +10,7 @@ Each stable agent UUID owns an independent mind directory under `brain/data/<age
 - `projects.json` holds at most three active self-authored projects. A missing decision update preserves them.
 - `autobiography.jsonl` contains model-authored derived chapters; source episodes remain untouched.
 - `memory-meta.json` tracks completed consolidation ranges.
+- Skill starts, progress-relevant failures, hunger thresholds, eating, crafting, combat, placement, and build-plan outcomes are embodiment-authored factual episodes. Model intent about those events remains subjective.
 
 ## Recall and budget
 
