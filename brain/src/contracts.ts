@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 const Position = z.object({ x: z.number(), y: z.number(), z: z.number() });
+/** Shared protocol invariant: PerceptionBuilder.MAX_CANDIDATES is 40. */
+export const MAX_ACTION_CANDIDATES=40;
 const TargetPosition = Position.extend({ x: z.number().int(), y: z.number().int(), z: z.number().int() });
 export const CandidateSchema = z.object({ id: z.string().min(1).max(128).regex(/^[A-Za-z0-9:_-]+$/), kind: z.enum(["WAIT", "MOVE_TO", "TRAVEL", "APPROACH_ENTITY", "APPROACH_BLOCK", "BREAK_BLOCK", "ACQUIRE_BLOCK", "PICK_UP_ITEM", "EAT_ITEM", "EQUIP_ITEM", "ENGAGE", "CRAFT", "PLACE_BLOCK", "BUILD_PLAN", "SPEAK"]), description: z.string().min(1).max(240), targetId: z.string().max(128).nullish(), target: TargetPosition.nullish() });
 export type Candidate = z.infer<typeof CandidateSchema>;
@@ -12,7 +14,7 @@ export const PerceptionSchema = z.object({
   capabilities: z.object({ playerHunger: z.boolean(), inventory: z.boolean(), nativeNavigation: z.boolean(), blockBreaking: z.boolean(), itemPickup: z.boolean(), eating:z.boolean().default(false), equipment:z.boolean().default(false), combat:z.boolean().default(false), crafting:z.boolean().default(false), placement:z.boolean().default(false) }),
   self: z.object({ position: Position, health: z.number().nonnegative(), maxHealth: z.number().positive(), alive: z.boolean(), onGround: z.boolean(), inWater: z.boolean(), onFire: z.boolean(), airSupply: z.number().int(), fallDistance: z.number().nonnegative(), effects: z.array(z.string().max(100)).max(16), inventory: z.array(z.object({ item: z.string().max(100), count: z.number().int().positive() })).max(36), hunger:z.object({current:z.number().int().min(0).max(20),max:z.literal(20),saturation:z.number().min(0).max(20),starving:z.boolean()}).optional(), equipment:z.object({mainHand:z.string().max(100).nullable(),offHand:z.string().max(100).nullable(),head:z.string().max(100).nullable(),chest:z.string().max(100).nullable(),legs:z.string().max(100).nullable(),feet:z.string().max(100).nullable()}).optional() }),
   environment: z.object({ dimension: z.string().max(100), timeOfDay: z.number().int().nonnegative(), weather: z.enum(["clear", "rain", "thunder"]), light: z.number().int().min(0).max(15), biome: z.string().max(100), daytime: z.boolean(), temperature: z.number(), downfall: z.number() }),
-  entities: z.array(ObservedEntity).max(16), blocks: z.array(ObservedBlock).max(40), items: z.array(ObservedItem).max(16), events: z.array(z.object({ kind: z.string().max(32), text: z.string().max(240) })).max(16), candidates: z.array(CandidateSchema).min(1).max(32)
+  entities: z.array(ObservedEntity).max(16), blocks: z.array(ObservedBlock).max(40), items: z.array(ObservedItem).max(16), events: z.array(z.object({ kind: z.string().max(32), text: z.string().max(240) })).max(16), candidates: z.array(CandidateSchema).min(1).max(MAX_ACTION_CANDIDATES)
 });
 export type Perception = z.infer<typeof PerceptionSchema>;
 const ProjectUpdateSchema=z.object({ operation:z.enum(["KEEP","CREATE","UPDATE","COMPLETE","ABANDON","PAUSE"]), projectId:z.string().max(80).optional(), title:z.string().max(120).optional(), purpose:z.string().max(280).optional(), progress:z.string().max(280).optional() }).optional();

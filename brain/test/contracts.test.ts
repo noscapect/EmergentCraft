@@ -1,11 +1,12 @@
 import test from "node:test"; import assert from "node:assert/strict";
-import { PerceptionSchema, validateDecision } from "../src/contracts.js";
+import { MAX_ACTION_CANDIDATES, PerceptionSchema, validateDecision } from "../src/contracts.js";
 import { DeterministicProvider } from "../src/provider.js";
 import { isFreshDecision } from "../src/freshness.js";
 const perception = PerceptionSchema.parse({ schemaVersion:1, agentId: "4bde43d4-cbe1-49d0-8a33-9b2e8004881d", name: "A", epoch: 0, capabilities:{playerHunger:false,inventory:true,nativeNavigation:true,blockBreaking:true,itemPickup:true}, self: { position:{x:0,y:0,z:0},health:20,maxHealth:20,alive:true,onGround:true,inWater:false,onFire:false,airSupply:300,fallDistance:0,effects:[],inventory:[] }, environment:{dimension:"minecraft:overworld",timeOfDay:0,weather:"clear",light:10,biome:"minecraft:plains",daytime:true,temperature:0.8,downfall:0},entities:[],blocks:[],items:[],events:[],candidates:[{id:"wait:0",kind:"WAIT",description:"Wait."}] });
 test("rejects action absent from candidates", () => assert.throws(() => validateDecision({ actionId: "break:secret", intent:"",reflection:null,speech:null }, perception)));
 test("accepts offered action", () => assert.equal(validateDecision({ actionId:"wait:0",intent:"observe",reflection:null,speech:null }, perception).actionId, "wait:0"));
 test("perception schema rejects an arbitrary action kind", () => assert.throws(() => PerceptionSchema.parse({ ...perception, candidates: [{ id:"x", kind:"COMMAND", description:"not legal" }] })));
+test("perception protocol accepts exactly 40 candidates and rejects 41",()=>{const candidates=Array.from({length:MAX_ACTION_CANDIDATES},(_,index)=>({id:`wait:${index}`,kind:"WAIT" as const,description:`Wait ${index}.`}));assert.equal(PerceptionSchema.parse({...perception,candidates}).candidates.length,40);assert.throws(()=>PerceptionSchema.parse({...perception,candidates:[...candidates,{id:"wait:40",kind:"WAIT",description:"too many"}]}));});
 test("deterministic provider never requires inference", async () => assert.equal((await new DeterministicProvider().decide(perception, { working:[],recalled:[],social:[],knowledge:[],beliefs:[],reflections:[],projects:[],chapters:[],self:{intent:"",updatedAt:"now"},contextChars:0 })).actionId, "wait:0"));
 test("stale decision epochs are rejected", () => { assert.equal(isFreshDecision(8, 7), false); assert.equal(isFreshDecision(8, 8), true); });
 test("unsupported player hunger is represented as a capability rather than fabricated state", () => assert.equal(perception.capabilities.playerHunger, false));
