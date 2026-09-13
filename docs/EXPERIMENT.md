@@ -12,6 +12,8 @@ The model may bring pretrained general Minecraft knowledge, but it is not told t
 
 Conversation is likewise an affordance, not a dialogue policy: residents can only address a locally perceived, currently offered player or resident, and the embodiment records what was actually said.
 
+Search is likewise an attempt, not an oracle: a resident physically visits a small bounded sequence of loaded places and can still fail to find something that exists elsewhere. Water flotation only prevents a body from being stranded by its locomotion; it introduces no survival preference. Death remains factual; an operator may explicitly use `/ec revive <name>`, which restores a body while retaining that inhabitant's stable identity.
+
 Continuity is persistent information and selective recall, not a claim that model weights change. Minecraft-authored events remain factual source records. A resident's beliefs, self-description, projects, reflections, and autobiographical chapters are explicitly subjective and may be wrong; they are never upgraded to world truth merely because a model wrote them.
 
 One configured local model serves the whole world. This is shared inference capacity, not a shared consciousness: each resident receives only its own UUID-keyed autobiographical context and leaves separate physical and memory traces.

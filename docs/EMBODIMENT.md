@@ -10,6 +10,8 @@ The first live test found that `Villager.setNoAi(true)` prevents the native serv
 
 Movement is exclusively started by the EmergentCraft executor through `Navigation.moveTo`. No movement path is implemented by repeated coordinate changes or teleporting. Because a subclass constructed with the vanilla type is saved by Minecraft as a normal Villager, the mod replaces only registered embodiment UUIDs with a fresh `GoalLessVillager` on server start; this is embodiment restoration, not movement.
 
+After free will is removed, the body reinstalls only vanilla `FloatGoal` and `PathNavigation.setCanFloat(true)`. This is water-safe locomotion capability, not a motivation: the Villager Brain remains suppressed and no wandering, survival, or target-selection goal is restored.
+
 Server-start repair alone is insufficient: an entity can deserialize as vanilla when its chunk loads later. The mod also subscribes to Fabric 26.2 `ServerEntityEvents.ENTITY_LOAD`. It compares the loaded entity UUID with the agent registry, schedules a guarded server-thread rewrap only for that exact registered vanilla Villager, atomically rebinds the registry to the replacement UUID after it was added successfully, then discards the old body. It preserves position, yaw, pitch, custom name, and current health. Unrelated Villagers never match and are untouched.
 
 ## Limitations

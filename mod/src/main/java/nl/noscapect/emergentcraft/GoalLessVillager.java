@@ -2,6 +2,7 @@ package nl.noscapect.emergentcraft;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.level.Level;
 
@@ -11,7 +12,15 @@ import net.minecraft.world.level.Level;
  * to remove registered goals and Brain behaviours.
  */
 public final class GoalLessVillager extends Villager {
-    public GoalLessVillager(EntityType<? extends Villager> type, Level level) { super(type, level); }
+    public GoalLessVillager(EntityType<? extends Villager> type, Level level) {
+        super(type, level);
+    }
+
+    /** Retain only flotation: it is locomotion safety, not a motivation or behaviour policy. */
+    public void enableWaterSafeNavigation() {
+        getNavigation().setCanFloat(true);
+        getGoalSelector().addGoal(0,new FloatGoal(this));
+    }
 
     @Override
     protected void customServerAiStep(ServerLevel level) {
