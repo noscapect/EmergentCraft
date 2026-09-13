@@ -9,3 +9,5 @@ Metabolism is UUID-local and persistent: hunger is 0-20 plus saturation; it drai
 Craft candidates are derived from the active vanilla recipe manager and current inventory. Crafting validates ingredients/output capacity and requires a nearby table for table-sized recipes. Placement requires carried block items, a local offered air position and support. The only FakePlayer use is an invisible placement proxy demanded by vanilla's player placement context.
 
 Build plans are model-authored local relative placements, capped at 24 and each validated against owned block items and world state. They are not house templates. Candidate categories are round-robin sampled so travel, entities, resources, inventory, crafting, placement and social action are represented fairly.
+
+Approach is not an empty loop: targets already within interaction distance are not offered as APPROACH candidates. Nearby perceived players and other EmergentCraft residents receive an explicit SPEAK affordance; speech remains a model-selected, factual event rather than a social script.

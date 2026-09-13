@@ -13,6 +13,7 @@ export type AndyCommand =
   | { name:"collectDrops"; args:[string,number] }
   | { name:"consume"|"equip"|"craftRecipe"|"placeHere"|"attack"; args:[string] | [string,number] }
   | { name:"goToPlayer"; args:[string,number] }
+  | { name:"startConversation"; args:[string,string] }
   | { name:"goToCoordinates"; args:[number,number,number,number] }
   | { name:"stay"; args:[number] }
   | { name:"newAction"; args:[string] }
@@ -23,7 +24,7 @@ type Definition={count:number; kinds:("string"|"number"|"integer")[]};
 const definitions:Record<AndyCommand["name"],Definition>={
   collectBlocks:{count:2,kinds:["string","integer"]}, collectDrops:{count:2,kinds:["string","integer"]},
   consume:{count:1,kinds:["string"]},equip:{count:1,kinds:["string"]},craftRecipe:{count:2,kinds:["string","integer"]},placeHere:{count:1,kinds:["string"]},attack:{count:1,kinds:["string"]},
-  goToPlayer:{count:2,kinds:["string","number"]},goToCoordinates:{count:4,kinds:["number","number","number","number"]},stay:{count:1,kinds:["number"]},newAction:{count:1,kinds:["string"]},
+  goToPlayer:{count:2,kinds:["string","number"]},startConversation:{count:2,kinds:["string","string"]},goToCoordinates:{count:4,kinds:["number","number","number","number"]},stay:{count:1,kinds:["number"]},newAction:{count:1,kinds:["string"]},
   stats:{count:0,kinds:[]},inventory:{count:0,kinds:[]},nearbyBlocks:{count:0,kinds:[]},nearbyEntities:{count:0,kinds:[]},craftable:{count:0,kinds:[]},searchForEntity:{count:2,kinds:["string","number"]},searchForBlock:{count:2,kinds:["string","number"]}
 };
 export type CommandParse={ok:true;command:AndyCommand;commandText:string}|{ok:false;error:string};
@@ -66,7 +67,7 @@ export function parseAndyCommand(text:string):CommandParse {
   for(let index=0;index<raw.length;index++){
     const expected=definition.kinds[index],value=raw[index];
     if(expected==="string"){
-      if(!value||/[`{};]/.test(value))return {ok:false,error:`Invalid string argument ${index+1}.`};
+      if(!value||value.length>240||/[`{};]/.test(value))return {ok:false,error:`Invalid string argument ${index+1}.`};
       args.push(value.trim());
     }else { const number=Number(value);if(!Number.isFinite(number)||(expected==="integer"&&!Number.isInteger(number)))return {ok:false,error:`Argument ${index+1} must be ${expected}.`};if((name==="collectBlocks"||name==="collectDrops"||name==="craftRecipe")&&number<1)return {ok:false,error:"Count must be positive."};if((name==="goToPlayer"||name==="goToCoordinates"||name==="stay"||name==="searchForEntity"||name==="searchForBlock")&&number<0)return {ok:false,error:"Distance/closeness must be zero or greater."};args.push(number); }
   }
@@ -115,12 +116,13 @@ export function matchAndyCommand(command:AndyCommand,perception:Perception):Comm
     case "placeHere":candidate=nearest(candidates.filter(value=>value.kind==="PLACE_BLOCK"&&key(value.targetId??"")===key(command.args[0] as string)),perception,"block");break;
     case "attack":candidate=byType("ENGAGE",command.args[0] as string,"entity");break;
     case "goToPlayer": { const name=key(command.args[0] as string);candidate=first(candidates.filter(value=>{const entity=perception.entities.find(entity=>entity.id===value.targetId);return value.kind==="APPROACH_ENTITY"&&key(entity?.name??"")===name&&(entity?.type==="minecraft:player"||entity?.emergentCraft!=null);}));break; }
+    case "startConversation": { const name=key(command.args[0] as string), utterance=(command.args[1] as string).trim(); if(!utterance||utterance.length>240)return {error:"Conversation utterance must be 1-240 characters."}; candidate=first(candidates.filter(value=>{const entity=perception.entities.find(entity=>entity.id===value.targetId);return value.kind==="SPEAK"&&key(entity?.name??"")===name&&(entity?.type==="minecraft:player"||entity?.emergentCraft!=null);})); break; }
     case "goToCoordinates": { const [x,y,z]=command.args;candidate=first(candidates.filter(value=>value.kind==="TRAVEL"&&value.target?.x===x&&value.target?.y===y&&value.target?.z===z));break; }
     case "stay":candidate=first(candidates.filter(value=>value.kind==="WAIT"));break;
     case "newAction": { if(/(?:=>|function\s*\(|\b(?:javascript|code|import|await)\b|[;`{}])/i.test(command.args[0]))return {error:"newAction contains code-like text."};candidate=first(candidates.filter(value=>value.kind==="BUILD_PLAN"));break; }
   }
-  if(command.name==="searchForEntity"){candidate=byType("APPROACH_ENTITY",command.args[0],"entity");return candidate?{candidate,command}:{error:`No currently perceived/offered ${command.args[0]} is available. Long-range search is not available in this body.`};}
-  if(command.name==="searchForBlock"){candidate=nearest(candidates.filter(value=>(value.kind==="APPROACH_BLOCK"||value.kind==="ACQUIRE_BLOCK")&&key(typeFor(value,perception)??"")===key(command.args[0])),perception,"block");return candidate?{candidate,command}:{error:`No currently perceived/offered ${command.args[0]} is available. Long-range search is not available in this body.`};}
+  if(command.name==="searchForEntity"){candidate=byType("APPROACH_ENTITY",command.args[0],"entity")??first(candidates.filter(value=>value.kind==="SEARCH_FOR_ENTITY"));return candidate?{candidate,command}:{error:"Physical search is not currently offered."};}
+  if(command.name==="searchForBlock"){candidate=nearest(candidates.filter(value=>(value.kind==="APPROACH_BLOCK"||value.kind==="ACQUIRE_BLOCK")&&key(typeFor(value,perception)??"")===key(command.args[0])),perception,"block")??first(candidates.filter(value=>value.kind==="SEARCH_FOR_BLOCK"));return candidate?{candidate,command}:{error:"Physical search is not currently offered."};}
   if(command.name==="goToCoordinates"){const [x,y,z]=command.args;candidate=candidates.filter(value=>value.kind==="TRAVEL"&&value.target).map(value=>({value,distance:Math.hypot(value.target!.x-x,value.target!.y-y,value.target!.z-z)})).filter(value=>value.distance<=1.5).sort((a,b)=>a.distance-b.distance||a.value.id.localeCompare(b.value.id))[0]?.value;}
   if(candidate)return {candidate,command};
   if(command.name==="craftRecipe")return {error:`No offered craft recipe produces ${command.args[0]}.`};
@@ -149,8 +151,10 @@ export function andyCommandDocs(perception:Perception):string {
     if(candidate.kind==="CRAFT"&&candidate.targetId)add(`!craftRecipe(\"${candidate.targetId.replace(/^minecraft:/,"")}\", 1) — craft that offered recipe.`);
     if(candidate.kind==="PLACE_BLOCK"&&candidate.targetId)add(`!placeHere(\"${candidate.targetId.replace(/^minecraft:/,"")}\") — place a carried block at an offered nearby position.`);
     if(candidate.kind==="ENGAGE"&&type)add(`!attack(\"${type.replace(/^minecraft:/,"")}\") — engage a visible ${type}.`);
-    if(candidate.kind==="APPROACH_ENTITY"){const entity=perception.entities.find(value=>value.id===candidate.targetId);if(entity?.name&&(entity.type==="minecraft:player"||entity.emergentCraft!=null))add(`!goToPlayer(\"${entity.name}\", 3) — approach ${entity.name}.`);if(entity) add(`!searchForEntity(\"${entity.type.replace(/^minecraft:/,"")}\", 16) — approach this perceived entity only.`);}
-    if((candidate.kind==="APPROACH_BLOCK"||candidate.kind==="ACQUIRE_BLOCK")&&type)add(`!searchForBlock(\"${type.replace(/^minecraft:/,"")}\", 16) — use this visible block only.`);
+    if(candidate.kind==="APPROACH_ENTITY"){const entity=perception.entities.find(value=>value.id===candidate.targetId);if(entity?.name&&(entity.type==="minecraft:player"||entity.emergentCraft!=null))add(`!goToPlayer(\"${entity.name}\", 3) — approach ${entity.name}.`);}
+    if(candidate.kind==="SPEAK"){const entity=perception.entities.find(value=>value.id===candidate.targetId);if(entity?.name)add(`!startConversation(\"${entity.name}\", \"hello\") — speak to that nearby person.`);}
+    if(candidate.kind==="SEARCH_FOR_ENTITY")add('!searchForEntity("entity_type", 16) — physically search nearby; range is capped at 48.');
+    if(candidate.kind==="SEARCH_FOR_BLOCK")add('!searchForBlock("block_id", 16) — physically search nearby; range is capped at 48.');
     if(candidate.kind==="BUILD_PLAN")add(`!newAction(\"Describe a small build using carried blocks\") — request a bounded build plan.`);
   }
   const travel=perception.candidates.filter(value=>value.kind==="TRAVEL"&&value.target).slice(0,3);for(const candidate of travel)add(`!goToCoordinates(${candidate.target!.x}, ${candidate.target!.y}, ${candidate.target!.z}, 2) — travel to this already offered destination.`);
@@ -165,5 +169,7 @@ export function toAndyDecision(raw:string,perception:Perception):{decision:Decis
   const parsed=parseAndyCommand(cleaned.text);if(!parsed.ok)return {error:parsed.error,diagnostic:{rawCleaned:cleaned.text,command:null,candidateId:null,valid:false,error:parsed.error}};
   const matched=matchAndyCommand(parsed.command,perception);if("error" in matched)return {error:matched.error,diagnostic:{rawCleaned:cleaned.text,command:parsed.commandText,candidateId:null,valid:false,error:matched.error}};
   const intent=safePublicIntent(cleaned.text,parsed.commandText)||commandIntent(parsed.command);
-  return {decision:{actionId:matched.candidate.id,intent,reflection:null,speech:null},command:parsed.command,diagnostic:{rawCleaned:cleaned.text,command:parsed.commandText,candidateId:matched.candidate.id,valid:true}};
+  const speech=parsed.command.name==="startConversation"?(parsed.command.args[1] as string).trim():null;
+  const search=(matched.candidate.kind==="SEARCH_FOR_ENTITY"||matched.candidate.kind==="SEARCH_FOR_BLOCK")&&(parsed.command.name==="searchForEntity"||parsed.command.name==="searchForBlock")?{target:(parsed.command.args[0] as string).includes(":")?parsed.command.args[0] as string:`minecraft:${parsed.command.args[0] as string}`,range:Math.min(48,Math.max(1,Math.floor(parsed.command.args[1] as number)))}:null;
+  return {decision:{actionId:matched.candidate.id,intent,reflection:null,speech,search},command:parsed.command,diagnostic:{rawCleaned:cleaned.text,command:parsed.commandText,candidateId:matched.candidate.id,valid:true}};
 }
