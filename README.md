@@ -64,7 +64,7 @@ If an old world reports a loaded vanilla body after a chunk reload, `/ec repairb
 
 `runServer` will create a development server. If you instead use a separately downloaded dedicated server, you must personally accept Mojang's EULA before running it; this repository never accepts it on your behalf.
 
-Set the one server-wide model in `brain/.env`. The default is `sweaterdog/andy-4` with profile `minecraft-andy4`; startup verifies it through Ollama and never silently chooses another model. All inhabitants share this inference engine but retain strictly separate UUID-keyed memories. `npm run smoke:ollama` performs one schema-constrained request and prints no hidden reasoning.
+Set the one server-wide model in `brain/.env`. The default is `sweaterdog/andy-4:micro-q8_0` with profile `minecraft-andy4`; startup verifies it through Ollama and never silently chooses another model. All inhabitants share this inference engine but retain strictly separate UUID-keyed memories. `npm run smoke:ollama` performs one schema-constrained request and prints no hidden reasoning.
 
 See [architecture](docs/ARCHITECTURE.md), [experiment boundaries](docs/EXPERIMENT.md), and [embodiment decision](docs/EMBODIMENT.md).
 
@@ -74,7 +74,7 @@ Set `EC_PROVIDER=ollama`, `EC_MODEL_PROFILE=qwen`, and `OLLAMA_MODEL=<installed 
 
 ### Andy-4 via Ollama
 
-Run `ollama pull sweaterdog/andy-4`, then use `EC_PROVIDER=ollama`, `EC_MODEL_PROFILE=minecraft-andy4`, and `OLLAMA_MODEL=sweaterdog/andy-4` in `brain/.env`. EmergentCraft never downloads model weights automatically.
+Run `ollama pull sweaterdog/andy-4:micro-q8_0`, then use `EC_PROVIDER=ollama`, `EC_MODEL_PROFILE=minecraft-andy4`, and `OLLAMA_MODEL=sweaterdog/andy-4:micro-q8_0` in `brain/.env`. This is the current EmergentCraft reference Andy-4 model, aligned with the Mindcraft integration used as upstream reference. EmergentCraft never downloads model weights automatically.
 
 ### Andy-4.1 via LM Studio / llama-server
 
