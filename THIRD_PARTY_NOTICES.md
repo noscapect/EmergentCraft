@@ -6,11 +6,11 @@ Source project: https://github.com/mindcraft-bots/mindcraft
 
 Source commit: `5f3acc87b479864124173de444f31fa5538f94a6`
 
-Original paths: `src/models/ollama.js`, `src/agent/commands/index.js`, `src/agent/commands/actions.js`, and the Andy profile JSON files.
+Original paths: `profiles/defaults/_default.json`, `src/models/prompter.js`, `src/agent/commands/index.js`, and `src/agent/commands/actions.js`.
 
 EmergentCraft destinations: `brain/src/andy.ts`, `brain/src/profiles.ts`, and `brain/src/provider.ts`.
 
-Method: ADAPTED. The Ollama chat shape, private-think cleanup strategy, strict command parsing/validation concepts, and command-document presentation were reimplemented in TypeScript. No source action function is executed or imported. Model text can only match an already-current offered action; arbitrary JavaScript, Mineflayer APIs, owner instructions, survival modes, and external goals are excluded.
+Method: ADAPTED. The Ollama chat shape, compact tool-feedback loop, private-think cleanup strategy, strict command parsing/validation concepts, and command-document presentation were reimplemented in TypeScript. Snapshot information tools are local and read-only; search compatibility can only select an already-current offered action. No source action function is executed or imported. Model text can never run arbitrary JavaScript, Mineflayer APIs, omniscient search, owner instructions, survival modes, or external goals.
 
 License: MIT License, Copyright (c) 2024 Kolby Nottingham.
 
